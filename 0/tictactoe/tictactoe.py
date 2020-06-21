@@ -143,31 +143,27 @@ def minimax(board):
     """
     if terminal(board):
         return None
+    return myminimax(board)[1]
 
+def myminimax(board):
+    if terminal(board):
+        return (utility(board), None)
     acts = actions(board)
     playr = player(board)
-    l = [None,None]
+    if playr == X:
+        playr = 1
+    else:
+        playr = -1
+    l=[None,None]
     for act in acts:
-        res_board = result(board,act)
-        if winner(res_board) == playr:
-            return act
+        res = myminimax(result(board,act))
+        if res[0] == playr:
+            return (playr,act)
+        elif res[0] == 0:
+            l[0] = (0,act)
         else:
-            if expect(res_board) == playr:
-                return act
-            elif expect(res_board) is None:
-                l[0] = act
-            else:
-                l[1] = act
+            l[1] = (res[0],act)
     if l[0] is not None:
         return l[0]
     else:
         return l[1]
-    #raise NotImplementedError
-
-def expect(board):
-    if terminal(board):
-        return winner(board)
-    else:
-        act = minimax(board)
-        res_board = result(board,act)
-        return expect(res_board)
